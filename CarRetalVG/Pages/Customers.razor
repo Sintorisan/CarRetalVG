@@ -1,0 +1,149 @@
+﻿@page "/customers"
+@inject BusinessLogic bl
+
+<PageTitle>Customers</PageTitle>
+
+
+<!-- Buttons for customer overview or adding customer -->
+<div class="d-flex justify-content-center m-5">
+    <div class="btn-group" role="group" aria-label="Basic radio toggle button group">
+
+        <div class="btn-group" role="group">
+            <button class="btn btn-primary" type="button" data-bs-toggle="collapse" data-bs-target="#customers" aria-expanded="false" aria-controls="collapseExample">
+                Customers
+            </button>
+        </div>
+        <div class="btn-group" role="group">
+            <button class="btn btn-primary" type="button" data-bs-toggle="collapse" data-bs-target="#addCustomer" aria-expanded="false" aria-controls="collapseExample">
+                Add Customers
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- Collapsible form for seeing customers -->
+<div class="collapse text-center" id="customers">
+    <div class="card card-body">
+        <div class="row justify-content-center align-items-center">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th scope="col">Customer Id</th>
+                        <th scope="col">Name</th>
+                        <th scope="col">Social Security Number</th>
+                        <th scope="col">Rental Vehicle</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var customer in bl.GetCustomers(null))
+                    {
+                        <tr class="@(customer.RentingVehicle == false ? "table-success" : "table-danger")">
+                        <th scope="row">@customer.Id</th>
+                        <td>@customer.FullName</td>
+                        <td>@customer.SSN</td>
+                        <td>@(customer.RentedVehicle == default ? "None" : $"{customer.RentedVehicle.Make} ({customer.RentedVehicle.RegistrationNumber})")</td>
+                    </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- Collapsible form for adding customers -->
+<div class="collapse text-center" id="addCustomer">
+    <div class="card card-body">
+        <div class="row justify-content-center align-items-center">
+            <div class="row justify-content-center align-items-center">
+                <div class="col-sm form-floating mb-3">
+                    <input class="form-control" id="makerInput" type="text" placeholder="First" @bind="firstName"/>
+                    <label for="makerInput">First Name</label>
+                </div>
+                <div class="col-sm form-floating mb-3">
+                    <input class="form-control" id="regNoInput" type="text" placeholder="Last" @bind="lastName"/>
+                    <label for="regNoInput">Last Name</label>
+                </div>
+                <div class="col-sm form-floating mb-3">
+                    <input class="form-control" id="yearInput" type="text" placeholder="ssn" @bind="ssn"/>
+                    <label for="yearInput">Social Security Number</label>
+                </div>
+                <button class="btn btn-primary" type="submit" @onclick="AddCustomer">Add</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Display message -->
+@if (inProgress)
+{
+    <div class="alert alert-light alert-dismissible fade show text-center" role="alert">
+        <div class="d-flex text-warning justify-content-center">
+            <div class="spinner-border" style="width: 3rem; height: 3rem;" role="status">
+                <span class="visually-hidden">Loading...</span>
+            </div>
+        </div>
+    </div>
+
+}
+@if (errorBool)
+{
+    <div class="alert alert-danger alert-dismissible fade show text-center" role="alert">
+        <h4>@errorMessage</h4>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close" @onclick="ResetMessage"></button>
+    </div>
+}
+else if (addingComplete)
+{
+    <div class="alert alert-success alert-dismissible fade show text-center" role="alert">
+        <h4>New Customer Added</h4>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close" @onclick="ResetMessage"></button>
+    </div>
+}
+
+@code {
+    string errorMessage = string.Empty;
+    bool errorBool = false;
+    bool addingComplete = false;
+    bool inProgress = false;
+
+    string firstName = string.Empty;
+    string lastName = string.Empty;
+    int ssn = default;
+
+    async Task AddCustomer()
+    {
+        try
+        {
+            inProgress = true;
+            await bl.AddCustomer(ssn, firstName, lastName);
+            DefaultEverything();
+        }
+        catch (Exception ex)
+        {
+            errorBool = true;
+            errorMessage = $"{ex.Message} Please try again";
+        }
+        finally
+        {
+            inProgress = false;
+            addingComplete = true;
+        }
+
+    }
+
+    void DefaultEverything()
+    {
+        firstName = string.Empty;
+        lastName = string.Empty;
+        ssn = default;
+
+        ResetMessage();
+    }
+
+    void ResetMessage()
+    {
+        errorMessage = string.Empty;
+        errorBool = false;
+        addingComplete = false;
+    }
+}

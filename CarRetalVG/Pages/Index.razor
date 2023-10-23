@@ -1,0 +1,298 @@
+﻿@page "/"
+
+@inject BusinessLogic bl
+
+<PageTitle>Cars</PageTitle>
+
+<h1 class="display-6">Vehicles</h1>
+
+<!-- Radio buttons for filtering -->
+<div class="d-flex justify-content-center m-5">
+    <div class="btn-group" role="group" aria-label="Basic radio toggle button group">
+        
+        <input type="radio" class="btn-check" @onchange="@(() => display = null)" name="btnradio" id="btnradio3" autocomplete="off" checked>
+        <label class="btn btn-outline-primary" for="btnradio3">All Vehicles</label>
+
+        <input type="radio" class="btn-check" @onchange="@(() => display = VehicleAvailability.Available)" name="btnradio" id="btnradio1" autocomplete="off">
+        <label class="btn btn-outline-primary" for="btnradio1">Available Vehicles</label>
+
+        <input type="radio" class="btn-check" @onchange="@(() => display = VehicleAvailability.Booked)" name="btnradio" id="btnradio2" autocomplete="off">
+        <label class="btn btn-outline-primary" for="btnradio2">Booked Vehicles</label>
+
+        <div class="btn-group" role="group">
+            <button class="btn btn-primary" type="button" data-bs-toggle="collapse" data-bs-target="#collapseExample" aria-expanded="false" aria-controls="collapseExample">
+                Add Vehicle
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- Collapsible form for adding vehicles -->
+<div class="collapse text-center" id="collapseExample">
+    <div class="card card-body">
+        <div class="row justify-content-center align-items-center">
+            <div class="col-sm form-floating mb-3">
+                <input class="form-control" id="makerInput" type="text" placeholder="Maker" @bind="make" />
+                <label for="makerInput">Maker</label>
+            </div>
+            <div class="col-sm form-floating mb-3">
+                <input class="form-control" id="regNoInput" type="text" placeholder="RegNo" @bind="regNo" />
+                <label for="regNoInput">Registration Number</label>
+            </div>
+            <div class="col-sm form-floating mb-3">
+                <input class="form-control" id="yearInput" type="text" placeholder="Year" @bind="year" />
+                <label for="yearInput">Year</label>
+            </div>
+            <div class="col-sm form-floating mb-3">
+                <input class="form-control" id="odometerInput" type="text" placeholder="Odometer" @bind="odometer" />
+                <label for="odometerInput">Km Driven</label>
+            </div>
+            <div class="col-sm form-floating mb-3">
+                <select class="form-select" id="typeSelect" @bind="type">
+                    @foreach (var vehicleType in bl.GetVehicleTypes())
+                    {
+                        <option>@vehicleType</option>
+                    }
+                </select>
+                <label for="typeSelect">Vehicle Type</label>
+            </div>
+            <div class="col-sm form-floating mb-3">
+                <select class="form-select" id="engineSelect" @bind="engine">
+                    @foreach (var vehicleEngine in bl.GetVehicleEngine())
+                    {
+                        <option>@vehicleEngine</option>
+                    }
+                </select>
+                <label for="engineSelect">Vehicle Engine</label>
+            </div>
+            <div class="col-sm mb-3 d-grid">
+                <button class="btn btn-primary" type="submit" @onclick="AddVehicle" disabled="@inProgress">Add</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Display message -->
+@if (inProgress)
+{
+    <div class="alert alert-light alert-dismissible fade show text-center" role="alert">
+        <div class="d-flex text-warning justify-content-center">
+            <div class="spinner-border" style="width: 3rem; height: 3rem;" role="status">
+                <span class="visually-hidden">Loading...</span>
+            </div>
+        </div>
+    </div>
+
+}
+@if (errorBool)
+{
+    <div class="alert alert-danger alert-dismissible fade show text-center" role="alert">
+        <h4>@errorMessage</h4>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close" @onclick="ResetMessage"></button>
+    </div>
+}
+else if (addingComplete)
+{
+    <div class="alert alert-success alert-dismissible fade show text-center" role="alert">
+        <h4>New Vehicle Added</h4>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close" @onclick="ResetMessage"></button>
+    </div>
+}
+else if (bookingComplete)
+{
+    <div class="alert alert-success alert-dismissible fade show text-center" role="alert">
+        <h4>Booking completed</h4>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close" @onclick="ResetMessage"></button>
+    </div>
+}
+
+<!-- Display vehicle cards -->
+<div class="row row-cols-1 row-cols-md-3 g-4 m-3">
+    @foreach (var v in bl.GetRentables(display))
+    {
+        <div class="col">
+            <div class="card text-bg-secondary" style="width: 18rem;">
+                <img src="@v.Picture" class="card-img-top img-thumbnail m-1" style="height:256px; width:auto;" alt="...">
+                <div class="card-body">
+                    <h5 class="card-title">@v.RegistrationNumber</h5>
+                    <p class="card-text">@v.Description</p>
+                </div>
+                <ul class="list-group list-group-flush">
+                    <li class="list-group-item text-bg-secondary">ID: @v.Id</li>
+                    <li class="list-group-item text-bg-secondary">Cost per day: @v.CostDay $</li>
+                    <li class="list-group-item text-bg-secondary">Cost per km: @v.CostKm $</li>
+                </ul>
+                <div class="btn-group" role="group" aria-label="Basic example">
+                    <button type="button" style="color: white;" data-bs-toggle="modal" data-bs-target="#exampleModal"
+                            class="btn btn-@(v.Availability.Equals(VehicleAvailability.Available) ? "success" : "danger")"
+                            disabled="@(v.Availability.Equals(VehicleAvailability.Booked) || inProgress)"
+                            @onclick="@(() => AssignValue(v))">
+                        @(v.Availability.Equals(VehicleAvailability.Available) ? "Book Vehicle" : "Booked")
+                    </button>
+                </div>
+            </div>
+        </div>
+    }
+</div>
+
+<!-- Modal for booking a vehicle -->
+<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="exampleModalLabel">Book a vehicle</h1>
+            </div>
+            <div class="modal-body">
+                @if (selectedRentable != null)
+                {
+                    <div class="row">
+                        <div class="col">
+                            <h6>Vehicle info:</h6>
+                            <div>
+                                <p><strong>Reg Number:</strong> @selectedRentable.RegistrationNumber</p>
+                                <p><strong>Maker:</strong> @selectedRentable.Make</p>
+                                <p><strong>Year:</strong> @selectedRentable.Year.ToString()</p>
+                                <p><strong>Driven:</strong> @selectedRentable.Odometer.ToString() km</p>
+                            </div>
+                        </div>
+                        <div class="col">
+                            <h6>Customer</h6>
+                            <select class="form-select-sm" @onchange="AssignSelectedCustomer">
+                                <option disabled selected value="">Customers</option>
+                                @foreach (var customer in bl.GetCustomers(false))
+                                {
+                                    <option value="@customer.Id">@customer.FullName</option>
+                                }
+                            </select>
+                        </div>
+                    </div>
+                }
+            </div>
+                
+            <div class="modal-footer justify-content-center">
+                <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary btn-sm" data-bs-dismiss="modal" @onclick="BookVehicle">Book</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+@code{
+    VehicleAvailability? display = default; // For the radio button filter
+
+    string errorMessage = string.Empty;
+    bool errorBool = false;
+    bool addingComplete = false;
+    bool bookingComplete = false;
+    bool inProgress = false;
+
+
+
+    // Booking process
+    IRentable? selectedRentable;
+    ICustomer? selectedCustomer;
+
+    void AssignSelectedCustomer(ChangeEventArgs e)
+    {
+        if (e.Value is null) throw new ArgumentNullException("Value is null");
+
+        if (int.TryParse(e.Value.ToString(), out int customerId)) 
+        {
+            var customer = bl.GetSingleCustomer(customerId);
+            AssignValue(customer);
+        }
+        else
+        {
+            throw new ArgumentException("Invalid customer ID format");
+        }
+        // Wouldn't allow me to cast this way =>  var customer = bl.GetSingleCustomer((int)e.Value);
+                                               // AssignValue(customer);
+       
+    }
+
+    void AssignValue<T>(T? value)
+    {
+        if (value is null) throw new ArgumentNullException("Value is null");
+
+        if (value is IRentable rentableValue)
+            selectedRentable = rentableValue;
+        else if (value is ICustomer customerValue)
+            selectedCustomer = customerValue;
+        else
+            throw new ArgumentException("Invalid value");
+    }
+
+
+    async Task BookVehicle()
+    {
+        try
+        {
+            inProgress = true;
+            await bl.AddBooking(selectedCustomer, selectedRentable);
+            DefaultEverything();
+        }
+        catch (Exception ex)
+        {
+            errorBool = true;
+            errorMessage = $"{ex.Message} Please try again";
+        }
+        finally
+        {
+            inProgress = false;
+            bookingComplete = true;
+        }
+
+    }
+
+    // Add vehicle process
+    VehicleType type;
+    VehicleEngine engine;
+    string make = string.Empty;
+    string regNo = string.Empty;
+    int year = default;
+    double odometer = default;
+
+    async Task AddVehicle()
+    {
+        try
+        {
+            inProgress = true;
+            await bl.AddVehicle(type, engine, odometer, make, year, regNo);
+            DefaultEverything();
+        }
+        catch (Exception ex)
+        {
+            errorBool = true;
+            errorMessage = $"{ex.Message} Please try again";
+        }
+        finally
+        {
+            inProgress = false;
+            addingComplete = true;
+        }
+    }
+
+    void DefaultEverything()
+    {
+        type = default;
+        engine = default;
+        make = string.Empty;
+        regNo = string.Empty;
+        year = default;
+        odometer = default;
+        selectedRentable = default;
+        selectedCustomer = default;
+        ResetMessage();
+    }
+
+    void ResetMessage()
+    {
+        errorMessage = string.Empty;
+        errorBool = false;
+        addingComplete = false;
+        bookingComplete = false;
+    }
+}
+
+

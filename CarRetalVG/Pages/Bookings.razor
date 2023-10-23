@@ -1,0 +1,251 @@
+﻿@page "/bookings"
+@inject BusinessLogic bl
+
+<PageTitle>Bookings</PageTitle>
+
+<h1>Bookings</h1>
+
+<div class="accordion" id="accordionPanelsStayOpenExample">
+    <!-- Collapsible form for open bookings -->
+    <div class="accordion-item">
+        <h2 class="accordion-header">
+            <button class="accordion-button btn-secondary" type="button" data-bs-toggle="collapse" data-bs-target="#panelsStayOpen-collapseOne" aria-expanded="true" aria-controls="panelsStayOpen-collapseOne">
+                <strong>Open Bookings</strong>
+            </button>
+        </h2>
+        <div id="panelsStayOpen-collapseOne" class="accordion-collapse collapse show">
+            <div class="accordion-body">
+                <table class="table ">
+                    <thead class="table-dark">
+                        <tr>
+                            <th scope="col">BookingId</th>
+                            <th scope="col">Customer (Id)</th>
+                            <th scope="col">Vehicle</th>
+                            <th scope="col">Km Rented</th>
+                            <th scope="col">Date Rented</th>
+                            <th scope="col">Km Driven</th>
+                            <th scope="col">End Booking</th>
+                            <th scope="col">Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        
+                            @foreach (var b in bl.GetBookingStatus("Open"))
+                            {
+                                <tr>
+                                    <th scope="row">@b.Id</th>
+                                    <td>@b.Customer.FullName (@b.Customer.Id)</td>
+                                    <td>@b.Vehicle.Make (@b.Vehicle.RegistrationNumber)</td>
+                                    <td>@b.KmStart km</td>
+                                    <td>@b.StartDate.ToShortDateString()</td>
+                                    <td><input type="number" @bind="b.KmDriven" disabled="@(b.Status == "Closed")" /></td>
+                                    <td>
+                                        <button type="button" class="btn btn-secondary btn-sm" @onclick="(() =>EndBooking(b.Id, DateTime.Now))" disabled="@(b.Status == "Closed")">
+                                            End Booking
+                                        </button>
+                                    </td>
+                                    <td><span class="badge text-bg-@(b.Status == "Open" ? "success" : "danger")">@b.Status</span></td>
+                               </tr>
+                            }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    <!-- Collapsible form for closed bookings -->
+    <div class="accordion-item">
+        <h2 class="accordion-header">
+            <button class="accordion-button btn-secondary" type="button" data-bs-toggle="collapse" data-bs-target="#panelsStayOpen-collapseTwo" aria-expanded="false" aria-controls="panelsStayOpen-collapseTwo">
+                <strong>Closed Bookings</strong>
+            </button>
+        </h2>
+        <div id="panelsStayOpen-collapseTwo" class="accordion-collapse collapse show">
+            <div class="accordion-body">
+                <table class="table ">
+                    <thead class="table-dark">
+                        <tr>
+                            <th scope="col">BookingId</th>
+                            <th scope="col">Customer (Id)</th>
+                            <th scope="col">Vehicle (RegNo)</th>
+                            <th scope="col">Km Rented</th>
+                            <th scope="col">Km Returned</th>
+                            <th scope="col">Date Rented</th>
+                            <th scope="col">Date Returned</th>
+                            <th scope="col">Km Driven</th>
+                            <th scope="col">Cost</th>
+                            <th scope="col">Delete Booking</th>
+                            <th scope="col">Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+
+                        @foreach (var b in bl.GetBookingStatus("Closed"))
+                        {
+                            <tr>
+                                <th scope="row">@b.Id</th>
+                                <td>@b.Customer.FullName (@b.Customer.Id)</td>
+                                <td>@b.Vehicle.Make (@b.Vehicle.RegistrationNumber)</td>
+                                <td>@b.KmStart km</td>
+                                <td>@b.Vehicle.Odometer km</td>
+                                <td>@b.StartDate.ToShortDateString()</td>
+                                <td>@b.ReturnDate</td>
+                                <td>@b.KmDriven km</td>
+                                <td>@b.TotalCost $</td>
+                                <td>
+                                    <button type="button" class="btn btn-secondary btn-sm" @onclick="(() =>DeleteBooking(b.Id))">
+                                        Delete Booking
+                                    </button>
+                                </td>
+                                <td><span class="badge text-bg-@(b.Status == "Open" ? "success" : "danger")">@b.Status</span></td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    <!-- Collapsible form for all bookings -->
+    <div class="accordion-item">
+        <h2 class="accordion-header">
+            <button class="accordion-button collapsed btn-secondary" type="button" data-bs-toggle="collapse" data-bs-target="#panelsStayOpen-collapseThree" aria-expanded="false" aria-controls="panelsStayOpen-collapseThree">
+                <strong>All Bookings</strong>
+            </button>
+        </h2>
+        <div id="panelsStayOpen-collapseThree" class="accordion-collapse collapse">
+            <div class="accordion-body">
+                <table class="table ">
+                    <thead class="table-dark">
+                        <tr>
+                            <th scope="col">BookingId</th>
+                            <th scope="col">Customer (Id)</th>
+                            <th scope="col">Vehicle (RegNo)</th>
+                            <th scope="col">Km Rented</th>
+                            <th scope="col">Km Returned</th>
+                            <th scope="col">Date Rented</th>
+                            <th scope="col">Date Returned</th>
+                            <th scope="col">Km Driven</th>
+                            <th scope="col">Cost</th>
+                            <th scope="col">Delete Booking</th>
+                            <th scope="col">Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+
+                        @foreach (var b in bl.GetBookingStatus(null))
+                        {
+                            <tr>
+                                <th scope="row">@b.Id</th>
+                                <td>@b.Customer.FullName (@b.Customer.Id)</td>
+                                <td>@b.Vehicle.Make (@b.Vehicle.RegistrationNumber)</td>
+                                <td>@b.KmStart km</td>
+                                <td>@b.Vehicle.Odometer km</td>
+                                <td>@b.StartDate.ToShortDateString()</td>
+                                <td>@b.ReturnDate</td>
+                                <td>@b.KmDriven km</td>
+                                <td>@b.TotalCost $</td>
+                                <td>
+                                    <button type="button" class="btn btn-secondary btn-sm" disabled="@(b.Status == "Open")" @onclick="(() =>DeleteBooking(b.Id))">
+                                        Delete Booking
+                                    </button>
+                                </td>
+                                <td><span class="badge text-bg-@(b.Status == "Open" ? "success" : "danger")">@b.Status</span></td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Display message -->
+@if (inProgress)
+{
+    <div class="alert alert-light alert-dismissible fade show text-center" role="alert">
+        <div class="d-flex text-warning justify-content-center">
+            <div class="spinner-border" style="width: 3rem; height: 3rem;" role="status">
+                <span class="visually-hidden">Loading...</span>
+            </div>
+        </div>
+    </div>
+
+}
+@if (errorBool)
+{
+    <div class="alert alert-danger alert-dismissible fade show text-center" role="alert">
+        <h4>@errorMessage</h4>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close" @onclick="ResetMessage"></button>
+    </div>
+}
+else if (endBookingComplete)
+{
+    <div class="alert alert-success alert-dismissible fade show text-center" role="alert">
+        <h4>Booking Ended</h4>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close" @onclick="ResetMessage"></button>
+    </div>
+}
+else if (deleteBookingComplete)
+{
+    <div class="alert alert-success alert-dismissible fade show text-center" role="alert">
+        <h4>Booking completed</h4>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close" @onclick="ResetMessage"></button>
+    </div>
+}
+
+@code {
+    string errorMessage = string.Empty;
+    bool errorBool = false;
+    bool inProgress = false;
+    bool endBookingComplete = false;
+    bool deleteBookingComplete = false;
+
+    async Task EndBooking(int id, DateTime returnDate)
+    {
+        try
+        {
+            inProgress = true;
+            await bl.EndBooking(id, returnDate);
+            ResetMessage();
+        }
+        catch (Exception ex)
+        {
+            errorBool = true;
+            errorMessage = $"{ex.Message} Please try again";
+        }
+        finally
+        {
+            inProgress = false;
+            endBookingComplete = true;
+        }
+       
+    }
+
+    async Task DeleteBooking(int id)
+    {
+        try
+        {
+            inProgress = true;
+            await bl.DeleteBooking(id);
+            ResetMessage();
+        }
+        catch (Exception ex)
+        {
+            errorBool = true;
+            errorMessage = $"{ex.Message} Please try again";
+        }
+        finally
+        {
+            inProgress = false;
+            endBookingComplete = true;
+        }
+        
+    }
+
+    void ResetMessage()
+    {
+        errorMessage = string.Empty;
+        errorBool = false;
+        endBookingComplete = false;
+        deleteBookingComplete = false;
+    }
+}
