@@ -15,7 +15,7 @@ public class Booking : IBooking
     public int KmStart { get; init; }
     public int KmDriven { get; set; }
     public int TotalCost { get; private set; }
-    public string Status => Vehicle.Availability == VehicleAvailability.Booked ? "Open" : "Closed";
+    public string Status { get; set; }
 
 
     public Booking(ICustomer customer, IRentable vehicle)
@@ -23,7 +23,7 @@ public class Booking : IBooking
         Customer = customer;
         Vehicle = vehicle;
         _id = IdGenerator();
-
+        Status = "Open";
         KmStart = (int)vehicle.Odometer;
         Vehicle.Availability = VehicleAvailability.Booked;
         Customer.RentingVehicle = true;

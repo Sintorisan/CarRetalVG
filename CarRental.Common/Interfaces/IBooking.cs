@@ -11,7 +11,7 @@ public interface IBooking
     public ICustomer Customer { get; set; }
     public IRentable Vehicle { get; set; }
     public int TotalCost { get;}
-    public string Status { get; }
+    public string Status { get; set; }
     public int KmStart { get; }
     public int KmDriven { get; set; }
 

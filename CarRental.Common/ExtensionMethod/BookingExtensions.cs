@@ -13,6 +13,7 @@ public static class BookingExtensions
         booking.Customer.RentedVehicle = default;
         booking.Vehicle.Availability = VehicleAvailability.Available;
         booking.Vehicle.Odometer += booking.KmDriven;
+        booking.Status = "Closed";
         
         
         return booking;
