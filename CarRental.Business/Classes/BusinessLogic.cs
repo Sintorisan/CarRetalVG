@@ -2,17 +2,19 @@
 using CarRental.Common.Enums;
 using CarRental.Common.ExtensionMethod;
 using CarRental.Common.Interfaces;
+using System.Net.Http.Json;
 
 namespace CarRental.Business.Classes
 {
     public class BusinessLogic
     {
-
         private readonly IData _data;
+        HttpClient _http;
 
-        public BusinessLogic(IData data)
+        public BusinessLogic(IData data, HttpClient http)
         {
             _data = data;
+            _http = http;
         }
 
         //Methods
@@ -122,6 +124,7 @@ namespace CarRental.Business.Classes
             return booking ?? throw new ArgumentException("Can't find booking");
         }
 
+
         //Customers
         public async Task AddCustomer(int ssn, string firstName, string lastName)
         {
@@ -147,17 +150,21 @@ namespace CarRental.Business.Classes
         public IEnumerable<VehicleEngine> GetVehicleEngine() => Enum.GetValues(typeof(VehicleEngine)).Cast<VehicleEngine>();
         public IEnumerable<VehicleType> GetVehicleTypes() => Enum.GetValues(typeof(VehicleType)).Cast<VehicleType>();
 
-        //Seeding Data
-        //    public async Task SeedVehicleData()
-        //    {
-        //        var cars = await _http.GetFromJsonAsync<List<Car>>("sample-data/cars.json");
-        //        var motorcycles = await _http.GetFromJsonAsync<List<Motorcycle>>("sample-data/motorcycles.json");
+        //Seeding Data - TODO: Får inte det att funka, be Jonas om hjälp
+//            public async Task SeedData()
+//        {
+//            var cars = await _http.GetFromJsonAsync<List<Car>>("sample-data/cars.json");
+//            var motorcycles = await _http.GetFromJsonAsync<List<Motorcycle>>("sample-data/motorcycles.json");
+//            var customers = await _http.GetFromJsonAsync<List<Customer>>("sample-data/customers.json");
 
-        //        if (cars != null)
-        //            _data.AddOrRemove(cars, 0);
+//            if (customers != null)
+//                AddRemove(customers, true);
 
-        //        if (motorcycles != null)
-        //            _data.AddOrRemove(motorcycles, 0);
-        //    }
-    }
+//            if (cars != null)
+//                AddRemove(cars, true);
+
+//            if (motorcycles != null)
+//                AddRemove(motorcycles, true);
+//        }
+   }
 }

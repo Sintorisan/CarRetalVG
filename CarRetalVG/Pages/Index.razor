@@ -187,6 +187,10 @@ else if (bookingComplete)
     bool bookingComplete = false;
     bool inProgress = false;
 
+    // protected override async Task OnInitializedAsync()
+    // {
+    //    await bl.SeedData();
+    // }
 
 
     // Booking process
@@ -207,8 +211,7 @@ else if (bookingComplete)
             throw new ArgumentException("Invalid customer ID format");
         }
         // Wouldn't allow me to cast this way =>  var customer = bl.GetSingleCustomer((int)e.Value);
-                                               // AssignValue(customer);
-       
+                                               // AssignValue(customer);       
     }
 
     void AssignValue<T>(T? value)
