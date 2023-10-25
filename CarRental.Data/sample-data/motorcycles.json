@@ -1,0 +1,38 @@
+﻿[
+  {
+    "Id": 8623,
+    "VehicleType": "Motorcycle",
+    "VehicleEngine": "Gasoline",
+    "Odometer": 10000.0,
+    "Make": "Harley-Davidson",
+    "Year": 2021,
+    "RegistrationNumber": "MOT001"
+  },
+  {
+    "Id": 5732,
+    "VehicleType": "Motorcycle",
+    "VehicleEngine": "Electric",
+    "Odometer": 8000.0,
+    "Make": "Ducati",
+    "Year": 2020,
+    "RegistrationNumber": "MOT002"
+  },
+  {
+    "Id": 4567,
+    "VehicleType": "Motorcycle",
+    "VehicleEngine": "Diesel",
+    "Odometer": 1500.0,
+    "Make": "BMW",
+    "Year": 2022,
+    "RegistrationNumber": "MOT003"
+  },
+  {
+    "Id": 7890,
+    "VehicleType": "Motorcycle",
+    "VehicleEngine": "Hybrid",
+    "Odometer": 6000.0,
+    "Make": "Kawasaki",
+    "Year": 2019,
+    "RegistrationNumber": "MOT004"
+  }
+]

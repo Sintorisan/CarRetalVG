@@ -23,29 +23,17 @@ public class CollectionData : IData
 
     void SeedData()
     {
-        _customers.Add(new Customer(CustomerId(), 780412, "John", "Doe"));
-        _customers.Add(new Customer(CustomerId(), 8510091, "Jane", "Doe"));
+        _customers.Add(new Customer(CustomerId(), 7807202635, "John", "Doe"));
+        _customers.Add(new Customer(CustomerId(), 6711247542, "Jane", "Doe"));
+        _customers.Add(new Customer(CustomerId(), 8810141536, "Bob", "Smith"));
+        _customers.Add(new Customer(CustomerId(), 9209063467, "Mary", "Johnson"));
         _rentables.Add(new Car(1, VehicleType.SUV, VehicleEngine.Diesel, 123425, "Volvo", 2020, "HAI-298"));
         _rentables.Add(new Car(2, VehicleType.Coupe, VehicleEngine.Electric, 212424, "Tesla", 2022, "MDI-571"));
         _rentables.Add(new Car(3, VehicleType.Hatchback, VehicleEngine.Gasoline, 234523, "Toyota", 2017, "KDI-631"));
         _rentables.Add(new Motorcycle(4, VehicleType.Motorcycle, VehicleEngine.Gasoline, 123414, "Yamaha", 2005, "AJI-361"));
-        //_bookings.Add(new Booking(_customers[0], _rentables[1]));
-        //_bookings.Add(new Booking(_customers[1], _rentables[0]));        
+        _bookings.Add(new Booking(_customers[0], _rentables[1]));
+        _bookings.Add(new Booking(_customers[1], _rentables[0]));        
     }
-
-    //public async Task<List<IRentable>> SeedVehicleData()
-    //{
-    //    var cars = await _http.GetFromJsonAsync<List<Car>>("sample-data/cars.json");
-    //    var motorcycles = await _http.GetFromJsonAsync<List<Motorcycle>>("sample-data/motorcycles.json");
-
-    //    if (cars != null)
-    //        _rentables.AddRange(cars);
-
-    //    if (motorcycles != null)
-    //        _rentables.AddRange(motorcycles);
-
-    //    return _rentables;
-    //}
 
     public int VehicleId()
     {

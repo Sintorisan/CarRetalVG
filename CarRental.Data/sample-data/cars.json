@@ -1,0 +1,83 @@
+[
+  {
+    "Id": 7168,
+    "VehicleType": "Sedan",
+    "VehicleEngine": "Gasoline",
+    "Odometer": 50000.0,
+    "Make": "Toyota",
+    "Year": 2020,
+    "RegistrationNumber": "ABC123"
+  },
+  {
+    "Id": 4987,
+    "VehicleType": "SUV",
+    "VehicleEngine": "Electric",
+    "Odometer": 30000.0,
+    "Make": "Honda",
+    "Year": 2019,
+    "RegistrationNumber": "DEF456"
+  },
+  {
+    "Id": 3214,
+    "VehicleType": "Truck",
+    "VehicleEngine": "Diesel",
+    "Odometer": 1000.0,
+    "Make": "Ford",
+    "Year": 2021,
+    "RegistrationNumber": "GHI789"
+  },
+  {
+    "Id": 8546,
+    "VehicleType": "Sedan",
+    "VehicleEngine": "Hybrid",
+    "Odometer": 40000.0,
+    "Make": "Chevrolet",
+    "Year": 2018,
+    "RegistrationNumber": "JKL012"
+  },
+  {
+    "Id": 6723,
+    "VehicleType": "SUV",
+    "VehicleEngine": "Gasoline",
+    "Odometer": 45000.0,
+    "Make": "Nissan",
+    "Year": 2018,
+    "RegistrationNumber": "LMN890"
+  },
+  {
+    "Id": 9876,
+    "VehicleType": "SUV",
+    "VehicleEngine": "Diesel",
+    "Odometer": 3000.0,
+    "Make": "Tesla",
+    "Year": 2022,
+    "RegistrationNumber": "OPQ123"
+  },
+  {
+    "Id": 2365,
+    "VehicleType": "Truck",
+    "VehicleEngine": "Electric",
+    "Odometer": 60000.0,
+    "Make": "Audi",
+    "Year": 2021,
+    "RegistrationNumber": "RST456"
+  },
+  {
+    "Id": 4321,
+    "VehicleType": "Compact",
+    "VehicleEngine": "Hybrid",
+    "Odometer": 20000.0,
+    "Make": "Volkswagen",
+    "Year": 2020,
+    "RegistrationNumber": "UVW789"
+  },
+  {
+    "Id": 5698,
+    "VehicleType": "SUV",
+    "VehicleEngine": "Gasoline",
+    "Odometer": 35000.0,
+    "Make": "Hyundai",
+    "Year": 2019,
+    "RegistrationNumber": "XYZ012"
+  }
+]

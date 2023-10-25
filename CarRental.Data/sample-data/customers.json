@@ -1,0 +1,82 @@
+﻿[
+  {
+    "Id": 453,
+    "SSN": 123456789,
+    "FirstName": "John",
+    "LastName": "Doe",
+    "RentingCar": false,
+    "rentedVehicle": null
+  },
+  {
+    "Id": 642,
+    "SSN": 987654321,
+    "FirstName": "Jane",
+    "LastName": "Doe",
+    "RentingCar": true,
+    "rentedVehicle": null
+  },
+  {
+    "Id": 126,
+    "SSN": 555555555,
+    "FirstName": "Bob",
+    "LastName": "Smith",
+    "RentingCar": false,
+    "rentedVehicle": null
+  },
+  {
+    "Id": 164,
+    "SSN": 777777777,
+    "FirstName": "Mary",
+    "LastName": "Johnson",
+    "RentingCar": true,
+    "rentedVehicle": null
+  },
+  {
+    "Id": 534,
+    "SSN": 999999999,
+    "FirstName": "Michael",
+    "LastName": "Brown",
+    "RentingCar": false,
+    "rentedVehicle": null
+  },
+  {
+    "Id": 684,
+    "SSN": 111111111,
+    "FirstName": "Emily",
+    "LastName": "Taylor",
+    "RentingCar": false,
+    "rentedVehicle": null
+  },
+  {
+    "Id": 472,
+    "SSN": 222222222,
+    "FirstName": "David",
+    "LastName": "Lee",
+    "RentingCar": true,
+    "rentedVehicle": null
+  },
+  {
+    "Id": 752,
+    "SSN": 333333333,
+    "FirstName": "Sarah",
+    "LastName": "Clark",
+    "RentingCar": false,
+    "rentedVehicle": null
+  },
+  {
+    "Id": 356,
+    "SSN": 444444444,
+    "FirstName": "James",
+    "LastName": "Garcia",
+    "RentingCar": true,
+    "rentedVehicle": null
+  },
+  {
+    "Id": 945,
+    "SSN": 666666666,
+    "FirstName": "Olivia",
+    "LastName": "Williams",
+    "RentingCar": false,
+    "rentedVehicle": null
+  }
+]

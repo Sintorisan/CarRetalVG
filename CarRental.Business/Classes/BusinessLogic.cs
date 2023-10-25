@@ -9,12 +9,10 @@ namespace CarRental.Business.Classes
     public class BusinessLogic
     {
         private readonly IData _data;
-        HttpClient _http;
 
-        public BusinessLogic(IData data, HttpClient http)
+        public BusinessLogic(IData data)
         {
             _data = data;
-            _http = http;
         }
 
         //Methods
@@ -150,21 +148,5 @@ namespace CarRental.Business.Classes
         public IEnumerable<VehicleEngine> GetVehicleEngine() => Enum.GetValues(typeof(VehicleEngine)).Cast<VehicleEngine>();
         public IEnumerable<VehicleType> GetVehicleTypes() => Enum.GetValues(typeof(VehicleType)).Cast<VehicleType>();
 
-        //Seeding Data - TODO: Får inte det att funka, be Jonas om hjälp
-//            public async Task SeedData()
-//        {
-//            var cars = await _http.GetFromJsonAsync<List<Car>>("sample-data/cars.json");
-//            var motorcycles = await _http.GetFromJsonAsync<List<Motorcycle>>("sample-data/motorcycles.json");
-//            var customers = await _http.GetFromJsonAsync<List<Customer>>("sample-data/customers.json");
-
-//            if (customers != null)
-//                AddRemove(customers, true);
-
-//            if (cars != null)
-//                AddRemove(cars, true);
-
-//            if (motorcycles != null)
-//                AddRemove(motorcycles, true);
-//        }
    }
 }

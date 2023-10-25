@@ -16,7 +16,7 @@ public class Customer : ICustomer
     public IRentable? RentedVehicle { get; set; }
 
 
-    public Customer(int id, int ssn, string firstName, string lastName) 
+    public Customer(int id, long ssn, string firstName, string lastName) 
         => (_id, _ssn, FirstName, LastName) = (id, ssn, firstName, lastName);
 
 
