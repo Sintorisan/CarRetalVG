@@ -1,9 +1,11 @@
 ﻿@page "/bookings"
+@inject InputValues iv
+@inject Messages m
 @inject BusinessLogic bl
 
 <PageTitle>Bookings</PageTitle>
 
-<h1>Bookings</h1>
+<h1 class="display-6">Bookings</h1>
 
 <div class="accordion" id="accordionPanelsStayOpenExample">
     <!-- Collapsible form for open bookings -->
@@ -40,7 +42,7 @@
                                     <td>@b.StartDate.ToShortDateString()</td>
                                     <td><input type="number" @bind="b.KmDriven" disabled="@(b.Status == "Closed")" /></td>
                                     <td>
-                                        <button type="button" class="btn btn-secondary btn-sm" @onclick="(() =>EndBooking(b.Id, DateTime.Now))" disabled="@(b.Status == "Closed")">
+                                        <button type="button" class="btn btn-secondary btn-sm" @onclick="(() => bl.EndBookingAsync(b.Id))" disabled="@(b.Status == "Closed")">
                                             End Booking
                                         </button>
                                     </td>
@@ -92,7 +94,7 @@
                                 <td>@b.KmDriven km</td>
                                 <td>@b.TotalCost $</td>
                                 <td>
-                                    <button type="button" class="btn btn-secondary btn-sm" @onclick="(() =>DeleteBooking(b.Id))">
+                                    <button type="button" class="btn btn-secondary btn-sm" @onclick="(() => bl.DeleteBookingAsync(b.Id))">
                                         Delete Booking
                                     </button>
                                 </td>
@@ -144,7 +146,7 @@
                                 <td>@b.KmDriven km</td>
                                 <td>@b.TotalCost $</td>
                                 <td>
-                                    <button type="button" class="btn btn-secondary btn-sm" disabled="@(b.Status == "Open")" @onclick="(() =>DeleteBooking(b.Id))">
+                                    <button type="button" class="btn btn-secondary btn-sm" disabled="@(b.Status == "Open")" @onclick="(() => bl.DeleteBookingAsync(b.Id))">
                                         Delete Booking
                                     </button>
                                 </td>
@@ -159,7 +161,7 @@
 </div>
 
 <!-- Display message -->
-@if (inProgress)
+@if (m.InProgressBool)
 {
     <div class="alert alert-light alert-dismissible fade show text-center" role="alert">
         <div class="d-flex text-warning justify-content-center">
@@ -170,82 +172,24 @@
     </div>
 
 }
-@if (errorBool)
+@if (m.ErrorBool)
 {
     <div class="alert alert-danger alert-dismissible fade show text-center" role="alert">
-        <h4>@errorMessage</h4>
-        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close" @onclick="ResetMessage"></button>
+        <h4>@m.Message</h4>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close" @onclick="m.ResetMessage"></button>
     </div>
 }
-else if (endBookingComplete)
+else if (m.EndBookingBool)
 {
     <div class="alert alert-success alert-dismissible fade show text-center" role="alert">
-        <h4>Booking Ended</h4>
-        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close" @onclick="ResetMessage"></button>
+        <h4>@m.Message</h4>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close" @onclick="m.ResetMessage"></button>
     </div>
 }
-else if (deleteBookingComplete)
+else if (m.DeleteBookingBool)
 {
     <div class="alert alert-success alert-dismissible fade show text-center" role="alert">
-        <h4>Booking completed</h4>
-        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close" @onclick="ResetMessage"></button>
+        <h4>@m.Message</h4>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close" @onclick="m.ResetMessage"></button>
     </div>
-}
-
-@code {
-    string errorMessage = string.Empty;
-    bool errorBool = false;
-    bool inProgress = false;
-    bool endBookingComplete = false;
-    bool deleteBookingComplete = false;
-
-    async Task EndBooking(int id, DateTime returnDate)
-    {
-        try
-        {
-            inProgress = true;
-            await bl.EndBooking(id, returnDate);
-            ResetMessage();
-        }
-        catch (Exception ex)
-        {
-            errorBool = true;
-            errorMessage = $"{ex.Message} Please try again";
-        }
-        finally
-        {
-            inProgress = false;
-            endBookingComplete = true;
-        }
-       
-    }
-
-    async Task DeleteBooking(int id)
-    {
-        try
-        {
-            inProgress = true;
-            await bl.DeleteBooking(id);
-            ResetMessage();
-        }
-        catch (Exception ex)
-        {
-            errorBool = true;
-            errorMessage = $"{ex.Message} Please try again";
-        }
-        finally
-        {
-            inProgress = false;
-            endBookingComplete = true;
-        }
-        
-    }
-
-    void ResetMessage()
-    {
-        errorMessage = string.Empty;
-        errorBool = false;
-        endBookingComplete = false;
-        deleteBookingComplete = false;
-    }
 }

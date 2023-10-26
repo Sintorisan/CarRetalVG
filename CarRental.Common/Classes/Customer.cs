@@ -11,14 +11,12 @@ public class Customer : ICustomer
     public long SSN => _ssn;
     public string FirstName { get; set; }
     public string LastName { get; set; }
-    public string FullName => NameConcat();
+    public string FullName => $"{FirstName} {LastName}";
     public bool RentingVehicle { get; set; } = false;
     public IRentable? RentedVehicle { get; set; }
 
 
-    public Customer(int id, long ssn, string firstName, string lastName) 
+    public Customer(int id, long ssn, string firstName, string lastName)
         => (_id, _ssn, FirstName, LastName) = (id, ssn, firstName, lastName);
 
-
-    string NameConcat() => $"{FirstName} {LastName}";
 }

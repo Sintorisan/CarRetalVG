@@ -4,7 +4,7 @@ namespace CarRental.Common.Interfaces;
 
 public interface IRentable
 {
-    public int Id { get;}
+    public int Id { get; }
     public VehicleType VehicleType { get; set; }
     public VehicleEngine Engine { get; set; }
     public VehicleAvailability Availability { get; set; }

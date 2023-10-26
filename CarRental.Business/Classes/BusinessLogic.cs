@@ -2,74 +2,93 @@
 using CarRental.Common.Enums;
 using CarRental.Common.ExtensionMethod;
 using CarRental.Common.Interfaces;
-using System.Net.Http.Json;
 
 namespace CarRental.Business.Classes
 {
     public class BusinessLogic
     {
         private readonly IData _data;
+        private readonly InputValues _iv;
+        private readonly Messages _messages;
 
-        public BusinessLogic(IData data)
+        public BusinessLogic(IData data, InputValues inputValues, Messages messages)
         {
             _data = data;
+            _iv = inputValues;
+            _messages = messages;
         }
 
         //Methods
-        public void AddRemove<T>(T item, bool addRemove) where T : class
+        public void Add<T>(T item) where T : class
         {
-            // addRemove = true; for adding - false; for removing
+            if (item == null) throw new ArgumentNullException("No item found");
 
-            if (item == default) throw new ArgumentNullException("Invalid item");
+            if (item is Booking booking)
+            {
+                _data.Add<IBooking>(booking);
+            }
+            else if (item is Customer customer)
+            {
+                _data.Add<ICustomer>(customer);
+            }
+            else if (item is Car car)
+            {
+                _data.Add<IRentable>(car);
+            }
+            else if (item is Motorcycle motorcycle)
+            {
+                _data.Add<IRentable>(motorcycle);
+            }
+        }
+        public void Remove<T>(T item) where T : class
+        {
+            if (item == null) throw new ArgumentNullException("No item found");
 
-            if (item is IRentable rentable)
+            if (item is Booking booking)
             {
-                switch (addRemove)
-                {
-                    case true: _data.Add(rentable); break;
-                    case false: _data.Remove(rentable); break;
-                    default: throw new ArgumentException("Invalid choice");
-                }
-
+                _data.Remove<IBooking>(booking);
             }
-            else if (item is ICustomer customer)
+            else if (item is Customer customer)
             {
-                switch (addRemove)
-                {
-                    case true: _data.Add(customer); break;
-                    case false: _data.Remove(customer); break;
-                    default: throw new ArgumentException("Invalid choice");
-                }
+                _data.Remove<ICustomer>(customer);
             }
-            else if (item is IBooking booking)
+            else if (item is Car car)
             {
-                switch (addRemove)
-                {
-                    case true: _data.Add(booking); break;
-                    case false: _data.Remove(booking); break;
-                    default: throw new ArgumentException("Invalid choice");
-                }
+                _data.Remove<IRentable>(car);
             }
-            else
+            else if (item is Motorcycle motorcycle)
             {
-                throw new ArgumentException("Invalid type.");
+                _data.Remove<IRentable>(motorcycle);
             }
         }
 
         //Vehicles
-        public async Task AddVehicle(VehicleType vt, VehicleEngine ve, double odo, string make, int year, string regNo)
+        public async Task AddVehicleAsync()
         {
-            await Task.Delay(3000);
-
-            if (vt == default || ve == default) throw new ArgumentException("Invalid data");
-
+            _messages.InProgress();
             int id = _data.VehicleId();
 
-            if (vt == VehicleType.Motorcycle)
-                AddRemove(new Motorcycle(id, vt, ve, odo, make, year, regNo), true);
-            else
-                AddRemove(new Car(id, vt, ve, odo, make, year, regNo), true);
+            await Task.Delay(3000);
 
+            if (_iv.Type == default || _iv.Engine == default) throw new ArgumentException("Invalid data");
+
+            try
+            {
+                if (_iv.Type == VehicleType.Motorcycle)
+                    Add(new Motorcycle(id, _iv.Type, _iv.Engine, _iv.Odometer, _iv.Make, _iv.Year, _iv.RegNo));
+                else
+                    Add(new Car(id, _iv.Type, _iv.Engine, _iv.Odometer, _iv.Make, _iv.Year, _iv.RegNo));
+
+                _iv.DefaultEverything();
+            }
+            catch (Exception ex)
+            {
+                _messages.ErrorMessage(ex);
+            }
+            finally
+            {
+                _messages.AddingSuccess();
+            }
         }
         public IEnumerable<IRentable> GetRentables(VehicleAvailability? status)
         {
@@ -83,33 +102,73 @@ namespace CarRental.Business.Classes
         }
 
         //Bookings
-        public async Task AddBooking(ICustomer? customer, IRentable? vehicle)
+        public async Task AddBookingAsync()
         {
+            _messages.InProgress();
+
             await Task.Delay(3000);
 
-            if (customer is null || vehicle is null) throw new ArgumentException("Invalid data");
+            if (_iv.SelectedCustomer is null || _iv.SelectedRentable is null) throw new ArgumentException("Invalid data");
 
-            AddRemove(new Booking(customer, vehicle), true);
+            try
+            {
+                Add(new Booking(_iv.SelectedCustomer, _iv.SelectedRentable));
+                _iv.DefaultEverything();
+            }
+            catch (Exception ex)
+            {
+                _messages.ErrorMessage(ex);
+            }
+            finally
+            {
+                _messages.BookingSuccess();
+            }
         }
-        public async Task EndBooking(int id, DateTime returnDate)
+        public async Task EndBookingAsync(int id)
         {
-            await Task.Delay(3000);
-
+            _messages.InProgress();
             var booking = GetSingleBooking(id);
+
+            await Task.Delay(3000);
 
             if (booking is null) throw new ArgumentException("Can't find booking");
 
-            booking.Reset().EndBooking(returnDate);
+            try
+            {
+                booking.Reset().EndBooking(DateTime.Now);
+            }
+            catch (Exception ex)
+            {
+                _messages?.ErrorMessage(ex);
+            }
+            finally
+            {
+                _messages.EndBooking();
+            }
+
         }
-        public async Task DeleteBooking(int id)
+        public async Task DeleteBookingAsync(int id)
         {
+            _messages.InProgress();
             var booking = GetSingleBooking(id);
 
             await Task.Delay(3000);
 
             if (booking is null) throw new ArgumentException("Can't find booking");
 
-            AddRemove(booking.Reset(), false);
+            try
+            {
+                Remove(booking.Reset());
+            }
+            catch (Exception ex)
+            {
+                _messages?.ErrorMessage(ex);
+            }
+            finally
+            {
+                _messages.DeleteBooking();
+            }
+
         }
         public IEnumerable<IBooking> GetBookingStatus(string? status)
         {
@@ -123,15 +182,30 @@ namespace CarRental.Business.Classes
         }
 
 
+
         //Customers
-        public async Task AddCustomer(int ssn, string firstName, string lastName)
+        public async Task AddCustomerAsync()
         {
+            _messages.InProgress();
+            int id = _data.CustomerId();
+
             await Task.Delay(3000);
 
-            if (ssn == 0) throw new ArgumentException("Invalid or to short SSN");
+            if (_iv.SSN == 0) throw new ArgumentException("Invalid or to short SSN");
 
-            int id = _data.CustomerId();
-            AddRemove<ICustomer>(new Customer(id, ssn, firstName, lastName), true);
+            try
+            {
+                Add(new Customer(id, _iv.SSN, _iv.FirstName, _iv.LastName));
+                _iv.DefaultEverything();
+            }
+            catch (Exception ex)
+            {
+                _messages.ErrorMessage(ex);
+            }
+            finally
+            {
+                _messages.AddingSuccess();
+            }
         }
         public ICustomer GetSingleCustomer(int id)
         {
@@ -148,5 +222,5 @@ namespace CarRental.Business.Classes
         public IEnumerable<VehicleEngine> GetVehicleEngine() => Enum.GetValues(typeof(VehicleEngine)).Cast<VehicleEngine>();
         public IEnumerable<VehicleType> GetVehicleTypes() => Enum.GetValues(typeof(VehicleType)).Cast<VehicleType>();
 
-   }
+    }
 }

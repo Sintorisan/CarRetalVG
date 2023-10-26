@@ -1,6 +1,4 @@
 ﻿using CarRental.Common.Enums;
-using CarRental.Common.Interfaces;
-using System.Reflection.Metadata.Ecma335;
 
 namespace CarRental.Common.Classes;
 
@@ -11,7 +9,7 @@ public class RentalVehicle
     public VehicleType VehicleType { get; set; }
     public VehicleEngine Engine { get; set; }
     public VehicleAvailability Availability { get; set; } = VehicleAvailability.Available;
-    public double Odometer { get;  set; }
+    public double Odometer { get; set; }
     public int CostKm => (int)Engine;
     public int CostDay => (int)VehicleType;
 
@@ -19,7 +17,7 @@ public class RentalVehicle
     public RentalVehicle(int id, VehicleType vt, VehicleEngine ve, double odo)
     {
         (_id, VehicleType, Engine, Odometer) = (id, vt, ve, odo);
-    }        
+    }
 
     public void OdoUpdate(double newOdo) => Odometer = newOdo;
 }

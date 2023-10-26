@@ -1,8 +1,11 @@
 ﻿@page "/customers"
+@inject InputValues iv
+@inject Messages m
 @inject BusinessLogic bl
 
 <PageTitle>Customers</PageTitle>
 
+<h1 class="display-6">Customers</h1>
 
 <!-- Buttons for customer overview or adding customer -->
 <div class="d-flex justify-content-center m-5">
@@ -56,25 +59,25 @@
         <div class="row justify-content-center align-items-center">
             <div class="row justify-content-center align-items-center">
                 <div class="col-sm form-floating mb-3">
-                    <input class="form-control" id="makerInput" type="text" placeholder="First" @bind="firstName"/>
+                    <input class="form-control" id="makerInput" type="text" placeholder="First" @bind="iv.FirstName"/>
                     <label for="makerInput">First Name</label>
                 </div>
                 <div class="col-sm form-floating mb-3">
-                    <input class="form-control" id="regNoInput" type="text" placeholder="Last" @bind="lastName"/>
+                    <input class="form-control" id="regNoInput" type="text" placeholder="Last" @bind="iv.LastName"/>
                     <label for="regNoInput">Last Name</label>
                 </div>
                 <div class="col-sm form-floating mb-3">
-                    <input class="form-control" id="yearInput" type="text" placeholder="ssn" @bind="ssn"/>
+                    <input class="form-control" id="yearInput" type="text" placeholder="ssn" @bind="iv.SSN"/>
                     <label for="yearInput">Social Security Number</label>
                 </div>
-                <button class="btn btn-primary" type="submit" @onclick="AddCustomer">Add</button>
+                <button class="btn btn-primary" type="submit" @onclick="bl.AddCustomerAsync">Add</button>
             </div>
         </div>
     </div>
 </div>
 
 <!-- Display message -->
-@if (inProgress)
+@if (m.InProgressBool)
 {
     <div class="alert alert-light alert-dismissible fade show text-center" role="alert">
         <div class="d-flex text-warning justify-content-center">
@@ -85,65 +88,18 @@
     </div>
 
 }
-@if (errorBool)
+@if (m.ErrorBool)
 {
     <div class="alert alert-danger alert-dismissible fade show text-center" role="alert">
-        <h4>@errorMessage</h4>
-        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close" @onclick="ResetMessage"></button>
+        <h4>@m.Message</h4>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close" @onclick="m.ResetMessage"></button>
     </div>
 }
-else if (addingComplete)
+else if (m.AddingComplete)
 {
     <div class="alert alert-success alert-dismissible fade show text-center" role="alert">
-        <h4>New Customer Added</h4>
-        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close" @onclick="ResetMessage"></button>
+        <h4>@m.Message</h4>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close" @onclick="m.ResetMessage"></button>
     </div>
 }
 
-@code {
-    string errorMessage = string.Empty;
-    bool errorBool = false;
-    bool addingComplete = false;
-    bool inProgress = false;
-
-    string firstName = string.Empty;
-    string lastName = string.Empty;
-    int ssn = default;
-
-    async Task AddCustomer()
-    {
-        try
-        {
-            inProgress = true;
-            await bl.AddCustomer(ssn, firstName, lastName);
-            DefaultEverything();
-        }
-        catch (Exception ex)
-        {
-            errorBool = true;
-            errorMessage = $"{ex.Message} Please try again";
-        }
-        finally
-        {
-            inProgress = false;
-            addingComplete = true;
-        }
-
-    }
-
-    void DefaultEverything()
-    {
-        firstName = string.Empty;
-        lastName = string.Empty;
-        ssn = default;
-
-        ResetMessage();
-    }
-
-    void ResetMessage()
-    {
-        errorMessage = string.Empty;
-        errorBool = false;
-        addingComplete = false;
-    }
-}

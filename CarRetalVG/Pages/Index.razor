@@ -1,5 +1,6 @@
 ﻿@page "/"
-
+@inject InputValues iv
+@inject Messages m
 @inject BusinessLogic bl
 
 <PageTitle>Cars</PageTitle>
@@ -10,13 +11,13 @@
 <div class="d-flex justify-content-center m-5">
     <div class="btn-group" role="group" aria-label="Basic radio toggle button group">
         
-        <input type="radio" class="btn-check" @onchange="@(() => display = null)" name="btnradio" id="btnradio3" autocomplete="off" checked>
+        <input type="radio" class="btn-check" @onchange="@(() => iv.Display = null)" name="btnradio" id="btnradio3" autocomplete="off" checked>
         <label class="btn btn-outline-primary" for="btnradio3">All Vehicles</label>
 
-        <input type="radio" class="btn-check" @onchange="@(() => display = VehicleAvailability.Available)" name="btnradio" id="btnradio1" autocomplete="off">
+        <input type="radio" class="btn-check" @onchange="@(() => iv.Display = VehicleAvailability.Available)" name="btnradio" id="btnradio1" autocomplete="off">
         <label class="btn btn-outline-primary" for="btnradio1">Available Vehicles</label>
 
-        <input type="radio" class="btn-check" @onchange="@(() => display = VehicleAvailability.Booked)" name="btnradio" id="btnradio2" autocomplete="off">
+        <input type="radio" class="btn-check" @onchange="@(() => iv.Display = VehicleAvailability.Booked)" name="btnradio" id="btnradio2" autocomplete="off">
         <label class="btn btn-outline-primary" for="btnradio2">Booked Vehicles</label>
 
         <div class="btn-group" role="group">
@@ -32,23 +33,23 @@
     <div class="card card-body">
         <div class="row justify-content-center align-items-center">
             <div class="col-sm form-floating mb-3">
-                <input class="form-control" id="makerInput" type="text" placeholder="Maker" @bind="make" />
+                <input class="form-control" id="makerInput" type="text" placeholder="Maker" @bind="iv.Make" />
                 <label for="makerInput">Maker</label>
             </div>
             <div class="col-sm form-floating mb-3">
-                <input class="form-control" id="regNoInput" type="text" placeholder="RegNo" @bind="regNo" />
+                <input class="form-control" id="regNoInput" type="text" placeholder="RegNo" @bind="iv.RegNo" />
                 <label for="regNoInput">Registration Number</label>
             </div>
             <div class="col-sm form-floating mb-3">
-                <input class="form-control" id="yearInput" type="text" placeholder="Year" @bind="year" />
+                <input class="form-control" id="yearInput" type="text" placeholder="Year" @bind="iv.Year" />
                 <label for="yearInput">Year</label>
             </div>
             <div class="col-sm form-floating mb-3">
-                <input class="form-control" id="odometerInput" type="text" placeholder="Odometer" @bind="odometer" />
+                <input class="form-control" id="odometerInput" type="text" placeholder="Odometer" @bind="iv.Odometer" />
                 <label for="odometerInput">Km Driven</label>
             </div>
             <div class="col-sm form-floating mb-3">
-                <select class="form-select" id="typeSelect" @bind="type">
+                <select class="form-select" id="typeSelect" @bind="iv.Type">
                     @foreach (var vehicleType in bl.GetVehicleTypes())
                     {
                         <option>@vehicleType</option>
@@ -57,7 +58,7 @@
                 <label for="typeSelect">Vehicle Type</label>
             </div>
             <div class="col-sm form-floating mb-3">
-                <select class="form-select" id="engineSelect" @bind="engine">
+                <select class="form-select" id="engineSelect" @bind="iv.Engine">
                     @foreach (var vehicleEngine in bl.GetVehicleEngine())
                     {
                         <option>@vehicleEngine</option>
@@ -66,14 +67,14 @@
                 <label for="engineSelect">Vehicle Engine</label>
             </div>
             <div class="col-sm mb-3 d-grid">
-                <button class="btn btn-primary" type="submit" @onclick="AddVehicle" disabled="@inProgress">Add</button>
+                <button class="btn btn-primary" type="submit" @onclick="bl.AddVehicleAsync" disabled="@m.InProgressBool">Add</button>
             </div>
         </div>
     </div>
 </div>
 
 <!-- Display message -->
-@if (inProgress)
+@if (m.InProgressBool)
 {
     <div class="alert alert-light alert-dismissible fade show text-center" role="alert">
         <div class="d-flex text-warning justify-content-center">
@@ -84,31 +85,31 @@
     </div>
 
 }
-@if (errorBool)
+@if (m.ErrorBool)
 {
     <div class="alert alert-danger alert-dismissible fade show text-center" role="alert">
-        <h4>@errorMessage</h4>
-        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close" @onclick="ResetMessage"></button>
+        <h4>@m.Message</h4>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close" @onclick="m.ResetMessage"></button>
     </div>
 }
-else if (addingComplete)
+else if (m.AddingComplete)
 {
     <div class="alert alert-success alert-dismissible fade show text-center" role="alert">
-        <h4>New Vehicle Added</h4>
-        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close" @onclick="ResetMessage"></button>
+        <h4>@m.Message</h4>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close" @onclick="m.ResetMessage"></button>
     </div>
 }
-else if (bookingComplete)
+else if (m.BookingComplete)
 {
     <div class="alert alert-success alert-dismissible fade show text-center" role="alert">
-        <h4>Booking completed</h4>
-        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close" @onclick="ResetMessage"></button>
+        <h4>@m.Message</h4>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close" @onclick="m.ResetMessage"></button>
     </div>
 }
 
 <!-- Display vehicle cards -->
 <div class="row row-cols-1 row-cols-md-3 g-4 m-3">
-    @foreach (var v in bl.GetRentables(display))
+    @foreach (var v in bl.GetRentables(iv.Display))
     {
         <div class="col">
             <div class="card text-bg-secondary" style="width: 18rem;">
@@ -125,8 +126,8 @@ else if (bookingComplete)
                 <div class="btn-group" role="group" aria-label="Basic example">
                     <button type="button" style="color: white;" data-bs-toggle="modal" data-bs-target="#exampleModal"
                             class="btn btn-@(v.Availability.Equals(VehicleAvailability.Available) ? "success" : "danger")"
-                            disabled="@(v.Availability.Equals(VehicleAvailability.Booked) || inProgress)"
-                            @onclick="@(() => AssignValue(v))">
+                            disabled="@(v.Availability.Equals(VehicleAvailability.Booked) || m.InProgressBool)"
+                    @onclick="@(() => iv.AssignValue(v))">
                         @(v.Availability.Equals(VehicleAvailability.Available) ? "Book Vehicle" : "Booked")
                     </button>
                 </div>
@@ -143,16 +144,16 @@ else if (bookingComplete)
                 <h1 class="modal-title fs-5" id="exampleModalLabel">Book a vehicle</h1>
             </div>
             <div class="modal-body">
-                @if (selectedRentable != null)
+                @if (iv.SelectedRentable != null)
                 {
                     <div class="row">
                         <div class="col">
                             <h6>Vehicle info:</h6>
                             <div>
-                                <p><strong>Reg Number:</strong> @selectedRentable.RegistrationNumber</p>
-                                <p><strong>Maker:</strong> @selectedRentable.Make</p>
-                                <p><strong>Year:</strong> @selectedRentable.Year.ToString()</p>
-                                <p><strong>Driven:</strong> @selectedRentable.Odometer.ToString() km</p>
+                                <p><strong>Reg Number:</strong> @iv.SelectedRentable.RegistrationNumber</p>
+                                <p><strong>Maker:</strong> @iv.SelectedRentable.Make</p>
+                                <p><strong>Year:</strong> @iv.SelectedRentable.Year.ToString()</p>
+                                <p><strong>Driven:</strong> @iv.SelectedRentable.Odometer.ToString() km</p>
                             </div>
                         </div>
                         <div class="col">
@@ -171,7 +172,7 @@ else if (bookingComplete)
                 
             <div class="modal-footer justify-content-center">
                 <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Close</button>
-                <button type="button" class="btn btn-primary btn-sm" data-bs-dismiss="modal" @onclick="BookVehicle">Book</button>
+                <button type="button" class="btn btn-primary btn-sm" data-bs-dismiss="modal" @onclick="bl.AddBookingAsync">Book</button>
             </div>
         </div>
     </div>
@@ -179,24 +180,6 @@ else if (bookingComplete)
 
 
 @code{
-    VehicleAvailability? display = default; // For the radio button filter
-
-    string errorMessage = string.Empty;
-    bool errorBool = false;
-    bool addingComplete = false;
-    bool bookingComplete = false;
-    bool inProgress = false;
-
-    // protected override async Task OnInitializedAsync()
-    // {
-    //    await bl.SeedData();
-    // }
-
-
-    // Booking process
-    IRentable? selectedRentable;
-    ICustomer? selectedCustomer;
-
     void AssignSelectedCustomer(ChangeEventArgs e)
     {
         if (e.Value is null) throw new ArgumentNullException("Value is null");
@@ -204,97 +187,14 @@ else if (bookingComplete)
         if (int.TryParse(e.Value.ToString(), out int customerId)) 
         {
             var customer = bl.GetSingleCustomer(customerId);
-            AssignValue(customer);
+            iv.AssignValue(customer);
         }
         else
         {
             throw new ArgumentException("Invalid customer ID format");
         }
         // Wouldn't allow me to cast this way =>  var customer = bl.GetSingleCustomer((int)e.Value);
-                                               // AssignValue(customer);       
-    }
-
-    void AssignValue<T>(T? value)
-    {
-        if (value is null) throw new ArgumentNullException("Value is null");
-
-        if (value is IRentable rentableValue)
-            selectedRentable = rentableValue;
-        else if (value is ICustomer customerValue)
-            selectedCustomer = customerValue;
-        else
-            throw new ArgumentException("Invalid value");
-    }
-
-
-    async Task BookVehicle()
-    {
-        try
-        {
-            inProgress = true;
-            await bl.AddBooking(selectedCustomer, selectedRentable);
-            DefaultEverything();
-        }
-        catch (Exception ex)
-        {
-            errorBool = true;
-            errorMessage = $"{ex.Message} Please try again";
-        }
-        finally
-        {
-            inProgress = false;
-            bookingComplete = true;
-        }
-
-    }
-
-    // Add vehicle process
-    VehicleType type;
-    VehicleEngine engine;
-    string make = string.Empty;
-    string regNo = string.Empty;
-    int year = default;
-    double odometer = default;
-
-    async Task AddVehicle()
-    {
-        try
-        {
-            inProgress = true;
-            await bl.AddVehicle(type, engine, odometer, make, year, regNo);
-            DefaultEverything();
-        }
-        catch (Exception ex)
-        {
-            errorBool = true;
-            errorMessage = $"{ex.Message} Please try again";
-        }
-        finally
-        {
-            inProgress = false;
-            addingComplete = true;
-        }
-    }
-
-    void DefaultEverything()
-    {
-        type = default;
-        engine = default;
-        make = string.Empty;
-        regNo = string.Empty;
-        year = default;
-        odometer = default;
-        selectedRentable = default;
-        selectedCustomer = default;
-        ResetMessage();
-    }
-
-    void ResetMessage()
-    {
-        errorMessage = string.Empty;
-        errorBool = false;
-        addingComplete = false;
-        bookingComplete = false;
+        // AssignValue(customer);       
     }
 }
 
