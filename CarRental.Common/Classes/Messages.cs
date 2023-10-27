@@ -17,6 +17,7 @@ public class Messages
     public void ErrorMessage(Exception ex)
     {
         ResetMessage();
+        InProgressBool = false;
         ErrorBool = true;
         Message = $"{ex.Message}! Please try again";
     }

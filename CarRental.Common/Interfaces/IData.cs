@@ -2,10 +2,10 @@
 
 public interface IData
 {
-    int VehicleId();
-    int CustomerId();
+    int VehicleId { get; }
+    int CustomerId { get; }
 
-    IEnumerable<T> Get<T>(Func<T, bool>? predicate = null);
+    IEnumerable<T> Get<T>(Func<T, bool>? predicate = null) where T : class;
     public T? GetSingle<T>(Func<T, bool> predicate) where T : class;
 
     public void Add<T>(T item) where T : class;

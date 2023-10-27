@@ -18,77 +18,31 @@ namespace CarRental.Business.Classes
             _messages = messages;
         }
 
-        //Methods
-        public void Add<T>(T item) where T : class
-        {
-            if (item == null) throw new ArgumentNullException("No item found");
-
-            if (item is Booking booking)
-            {
-                _data.Add<IBooking>(booking);
-            }
-            else if (item is Customer customer)
-            {
-                _data.Add<ICustomer>(customer);
-            }
-            else if (item is Car car)
-            {
-                _data.Add<IRentable>(car);
-            }
-            else if (item is Motorcycle motorcycle)
-            {
-                _data.Add<IRentable>(motorcycle);
-            }
-        }
-        public void Remove<T>(T item) where T : class
-        {
-            if (item == null) throw new ArgumentNullException("No item found");
-
-            if (item is Booking booking)
-            {
-                _data.Remove<IBooking>(booking);
-            }
-            else if (item is Customer customer)
-            {
-                _data.Remove<ICustomer>(customer);
-            }
-            else if (item is Car car)
-            {
-                _data.Remove<IRentable>(car);
-            }
-            else if (item is Motorcycle motorcycle)
-            {
-                _data.Remove<IRentable>(motorcycle);
-            }
-        }
-
         //Vehicles
         public async Task AddVehicleAsync()
         {
             _messages.InProgress();
-            int id = _data.VehicleId();
+            int id = _data.VehicleId;
 
-            await Task.Delay(3000);
-
-            if (_iv.Type == default || _iv.Engine == default) throw new ArgumentException("Invalid data");
+            await Task.Delay(3000);           
 
             try
             {
+                if (_iv.Type == default || _iv.Engine == default) throw new ArgumentException("Invalid data");
+
                 if (_iv.Type == VehicleType.Motorcycle)
-                    Add(new Motorcycle(id, _iv.Type, _iv.Engine, _iv.Odometer, _iv.Make, _iv.Year, _iv.RegNo));
+                    _data.Add<IRentable>(new Motorcycle(id, _iv.Type, _iv.Engine, _iv.Odometer, _iv.RentableInput.Make, _iv.Year, _iv.RegNo));
                 else
-                    Add(new Car(id, _iv.Type, _iv.Engine, _iv.Odometer, _iv.Make, _iv.Year, _iv.RegNo));
+                    _data.Add<IRentable>(new Car(id, _iv.Type, _iv.Engine, _iv.Odometer, _iv.Make, _iv.Year, _iv.RegNo));
 
                 _iv.DefaultEverything();
+                _messages.AddingSuccess();
             }
             catch (Exception ex)
             {
                 _messages.ErrorMessage(ex);
             }
-            finally
-            {
-                _messages.AddingSuccess();
-            }
+
         }
         public IEnumerable<IRentable> GetRentables(VehicleAvailability? status)
         {
@@ -106,22 +60,19 @@ namespace CarRental.Business.Classes
         {
             _messages.InProgress();
 
-            await Task.Delay(3000);
-
-            if (_iv.SelectedCustomer is null || _iv.SelectedRentable is null) throw new ArgumentException("Invalid data");
+            await Task.Delay(3000);            
 
             try
             {
-                Add(new Booking(_iv.SelectedCustomer, _iv.SelectedRentable));
+                if (_iv.SelectedCustomer is null || _iv.SelectedRentable is null) throw new ArgumentException("Invalid data");
+
+                _data.Add<IBooking>(new Booking(_iv.SelectedCustomer, _iv.SelectedRentable));
                 _iv.DefaultEverything();
+                _messages.BookingSuccess();
             }
             catch (Exception ex)
             {
                 _messages.ErrorMessage(ex);
-            }
-            finally
-            {
-                _messages.BookingSuccess();
             }
         }
         public async Task EndBookingAsync(int id)
@@ -131,44 +82,38 @@ namespace CarRental.Business.Classes
 
             await Task.Delay(3000);
 
-            if (booking is null) throw new ArgumentException("Can't find booking");
+            
 
             try
             {
+                if (booking is null) throw new ArgumentException("Can't find booking");
+
                 booking.Reset().EndBooking(DateTime.Now);
+                _messages.EndBooking();
             }
             catch (Exception ex)
             {
                 _messages?.ErrorMessage(ex);
             }
-            finally
-            {
-                _messages.EndBooking();
-            }
-
         }
         public async Task DeleteBookingAsync(int id)
         {
             _messages.InProgress();
             var booking = GetSingleBooking(id);
 
-            await Task.Delay(3000);
-
-            if (booking is null) throw new ArgumentException("Can't find booking");
+            await Task.Delay(3000);           
 
             try
             {
-                Remove(booking.Reset());
+                if (booking is null) throw new ArgumentException("Can't find booking");
+
+                _data.Remove(booking.Reset());
+                _messages.DeleteBooking();
             }
             catch (Exception ex)
             {
                 _messages?.ErrorMessage(ex);
             }
-            finally
-            {
-                _messages.DeleteBooking();
-            }
-
         }
         public IEnumerable<IBooking> GetBookingStatus(string? status)
         {
@@ -187,24 +132,21 @@ namespace CarRental.Business.Classes
         public async Task AddCustomerAsync()
         {
             _messages.InProgress();
-            int id = _data.CustomerId();
+            int id = _data.CustomerId;
 
-            await Task.Delay(3000);
-
-            if (_iv.SSN == 0) throw new ArgumentException("Invalid or to short SSN");
+            await Task.Delay(3000);            
 
             try
             {
-                Add(new Customer(id, _iv.SSN, _iv.FirstName, _iv.LastName));
+                if (_iv.SSN == 0) throw new ArgumentException("Invalid or to short SSN");
+
+                _data.Add<ICustomer>(new Customer(id, _iv.SSN, _iv.FirstName, _iv.LastName));
                 _iv.DefaultEverything();
+                _messages.AddingSuccess();
             }
             catch (Exception ex)
             {
                 _messages.ErrorMessage(ex);
-            }
-            finally
-            {
-                _messages.AddingSuccess();
             }
         }
         public ICustomer GetSingleCustomer(int id)
