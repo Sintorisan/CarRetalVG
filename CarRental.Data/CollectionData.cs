@@ -46,7 +46,7 @@ public class CollectionData : IData
 
         var value = collections.GetValue(this) ?? throw new InvalidDataException();
 
-        return ((List<T>)value);
+        return (List<T>)value;
     }
 
     public IEnumerable<T> Get<T>(Func<T, bool>? predicate) where T : class

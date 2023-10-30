@@ -85,23 +85,9 @@
     </div>
 
 }
-@if (m.ErrorBool)
+@if (m.ErrorBool || m.AddingComplete || m.BookingComplete)
 {
-    <div class="alert alert-danger alert-dismissible fade show text-center" role="alert">
-        <h4>@m.Message</h4>
-        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close" @onclick="m.ResetMessage"></button>
-    </div>
-}
-else if (m.AddingComplete)
-{
-    <div class="alert alert-success alert-dismissible fade show text-center" role="alert">
-        <h4>@m.Message</h4>
-        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close" @onclick="m.ResetMessage"></button>
-    </div>
-}
-else if (m.BookingComplete)
-{
-    <div class="alert alert-success alert-dismissible fade show text-center" role="alert">
+    <div class="alert alert-@(m.ErrorBool ? "danger" : "success") alert-dismissible fade show text-center" role="alert">
         <h4>@m.Message</h4>
         <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close" @onclick="m.ResetMessage"></button>
     </div>
