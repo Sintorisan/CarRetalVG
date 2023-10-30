@@ -59,15 +59,15 @@
         <div class="row justify-content-center align-items-center">
             <div class="row justify-content-center align-items-center">
                 <div class="col-sm form-floating mb-3">
-                    <input class="form-control" id="makerInput" type="text" placeholder="First" @bind="iv.FirstName"/>
+                    <input class="form-control" id="makerInput" type="text" placeholder="First" @bind="iv.CustomerInput.FirstName"/>
                     <label for="makerInput">First Name</label>
                 </div>
                 <div class="col-sm form-floating mb-3">
-                    <input class="form-control" id="regNoInput" type="text" placeholder="Last" @bind="iv.LastName"/>
+                    <input class="form-control" id="regNoInput" type="text" placeholder="Last" @bind="iv.CustomerInput.LastName"/>
                     <label for="regNoInput">Last Name</label>
                 </div>
                 <div class="col-sm form-floating mb-3">
-                    <input class="form-control" id="yearInput" type="text" placeholder="ssn" @bind="iv.SSN"/>
+                    <input class="form-control" id="yearInput" type="text" placeholder="ssn" @bind="iv.CustomerInput.SSN" />
                     <label for="yearInput">Social Security Number</label>
                 </div>
                 <button class="btn btn-primary" type="submit" @onclick="bl.AddCustomerAsync">Add</button>

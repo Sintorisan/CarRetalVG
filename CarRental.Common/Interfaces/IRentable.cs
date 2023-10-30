@@ -9,8 +9,8 @@ public interface IRentable
     public VehicleEngine Engine { get; set; }
     public VehicleAvailability Availability { get; set; }
     public string Make { get; set; }
-    public int Year { get; }
-    public string RegistrationNumber { get; }
+    public int Year { get; set; }
+    public string RegistrationNumber { get; set; }
     public double Odometer { get; set; }
     public int CostKm { get; }
     public int CostDay { get; }

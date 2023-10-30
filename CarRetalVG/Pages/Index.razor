@@ -33,23 +33,23 @@
     <div class="card card-body">
         <div class="row justify-content-center align-items-center">
             <div class="col-sm form-floating mb-3">
-                <input class="form-control" id="makerInput" type="text" placeholder="Maker" @bind="iv.Make" />
+                <input class="form-control" id="makerInput" type="text" placeholder="Maker" @bind="iv.RentableInput.Make" />
                 <label for="makerInput">Maker</label>
             </div>
             <div class="col-sm form-floating mb-3">
-                <input class="form-control" id="regNoInput" type="text" placeholder="RegNo" @bind="iv.RegNo" />
+                <input class="form-control" id="regNoInput" type="text" placeholder="RegNo" @bind="iv.RentableInput.RegistrationNumber" />
                 <label for="regNoInput">Registration Number</label>
             </div>
             <div class="col-sm form-floating mb-3">
-                <input class="form-control" id="yearInput" type="text" placeholder="Year" @bind="iv.Year" />
+                <input class="form-control" id="yearInput" type="text" placeholder="Year" @bind="iv.RentableInput.Year" />
                 <label for="yearInput">Year</label>
             </div>
             <div class="col-sm form-floating mb-3">
-                <input class="form-control" id="odometerInput" type="text" placeholder="Odometer" @bind="iv.Odometer" />
+                <input class="form-control" id="odometerInput" type="text" placeholder="Odometer" @bind="iv.RentableInput.Odometer" />
                 <label for="odometerInput">Km Driven</label>
             </div>
             <div class="col-sm form-floating mb-3">
-                <select class="form-select" id="typeSelect" @bind="iv.Type">
+                <select class="form-select" id="typeSelect" @bind="iv.RentableInput.VehicleType">
                     @foreach (var vehicleType in bl.GetVehicleTypes())
                     {
                         <option>@vehicleType</option>
@@ -58,7 +58,7 @@
                 <label for="typeSelect">Vehicle Type</label>
             </div>
             <div class="col-sm form-floating mb-3">
-                <select class="form-select" id="engineSelect" @bind="iv.Engine">
+                <select class="form-select" id="engineSelect" @bind="iv.RentableInput.Engine">
                     @foreach (var vehicleEngine in bl.GetVehicleEngine())
                     {
                         <option>@vehicleEngine</option>
@@ -127,7 +127,7 @@ else if (m.BookingComplete)
                     <button type="button" style="color: white;" data-bs-toggle="modal" data-bs-target="#exampleModal"
                             class="btn btn-@(v.Availability.Equals(VehicleAvailability.Available) ? "success" : "danger")"
                             disabled="@(v.Availability.Equals(VehicleAvailability.Booked) || m.InProgressBool)"
-                    @onclick="@(() => iv.AssignValue(v))">
+                    @onclick="@(() => iv.SelectedRentable = v)">
                         @(v.Availability.Equals(VehicleAvailability.Available) ? "Book Vehicle" : "Booked")
                     </button>
                 </div>
@@ -187,7 +187,7 @@ else if (m.BookingComplete)
         if (int.TryParse(e.Value.ToString(), out int customerId)) 
         {
             var customer = bl.GetSingleCustomer(customerId);
-            iv.AssignValue(customer);
+            iv.SelectedCustomer = customer;
         }
         else
         {

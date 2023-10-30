@@ -14,6 +14,8 @@ public class RentalVehicle
     public int CostDay => (int)VehicleType;
 
 
+    public RentalVehicle() { }
+
     public RentalVehicle(int id, VehicleType vt, VehicleEngine ve, double odo)
     {
         (_id, VehicleType, Engine, Odometer) = (id, vt, ve, odo);

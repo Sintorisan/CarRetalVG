@@ -24,16 +24,16 @@ namespace CarRental.Business.Classes
             _messages.InProgress();
             int id = _data.VehicleId;
 
-            await Task.Delay(3000);           
+            await Task.Delay(3000);
 
             try
             {
-                if (_iv.Type == default || _iv.Engine == default) throw new ArgumentException("Invalid data");
+                if (_iv.RentableInput.VehicleType == default || _iv.RentableInput.Engine == default) throw new ArgumentException("Invalid data");
 
-                if (_iv.Type == VehicleType.Motorcycle)
-                    _data.Add<IRentable>(new Motorcycle(id, _iv.Type, _iv.Engine, _iv.Odometer, _iv.RentableInput.Make, _iv.Year, _iv.RegNo));
+                if (_iv.RentableInput.VehicleType == VehicleType.Motorcycle)
+                    _data.Add<IRentable>(new Motorcycle(id, _iv.RentableInput.VehicleType, _iv.RentableInput.Engine, _iv.RentableInput.Odometer, _iv.RentableInput.Make, _iv.RentableInput.Year, _iv.RentableInput.RegistrationNumber));
                 else
-                    _data.Add<IRentable>(new Car(id, _iv.Type, _iv.Engine, _iv.Odometer, _iv.Make, _iv.Year, _iv.RegNo));
+                    _data.Add<IRentable>(new Car(id, _iv.RentableInput.VehicleType, _iv.RentableInput.Engine, _iv.RentableInput.Odometer, _iv.RentableInput.Make, _iv.RentableInput.Year, _iv.RentableInput.RegistrationNumber));
 
                 _iv.DefaultEverything();
                 _messages.AddingSuccess();
@@ -60,7 +60,7 @@ namespace CarRental.Business.Classes
         {
             _messages.InProgress();
 
-            await Task.Delay(3000);            
+            await Task.Delay(3000);
 
             try
             {
@@ -82,7 +82,7 @@ namespace CarRental.Business.Classes
 
             await Task.Delay(3000);
 
-            
+
 
             try
             {
@@ -101,7 +101,7 @@ namespace CarRental.Business.Classes
             _messages.InProgress();
             var booking = GetSingleBooking(id);
 
-            await Task.Delay(3000);           
+            await Task.Delay(3000);
 
             try
             {
@@ -126,21 +126,19 @@ namespace CarRental.Business.Classes
             return booking ?? throw new ArgumentException("Can't find booking");
         }
 
-
-
         //Customers
         public async Task AddCustomerAsync()
         {
             _messages.InProgress();
             int id = _data.CustomerId;
 
-            await Task.Delay(3000);            
+            await Task.Delay(3000);
 
             try
             {
-                if (_iv.SSN == 0) throw new ArgumentException("Invalid or to short SSN");
+                if (_iv.CustomerInput.SSN == 0) throw new ArgumentException("Invalid or to short SSN");
 
-                _data.Add<ICustomer>(new Customer(id, _iv.SSN, _iv.FirstName, _iv.LastName));
+                _data.Add<ICustomer>(new Customer(id, _iv.CustomerInput.SSN, _iv.CustomerInput.FirstName, _iv.CustomerInput.LastName));
                 _iv.DefaultEverything();
                 _messages.AddingSuccess();
             }
